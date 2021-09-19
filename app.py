@@ -7,7 +7,7 @@ ListOfMessages = []
 @app.route('/')
 def hello_world():
     return 'Messenger is running! ' \
-           '<br> <a href="/status">Кто нажмёт тот пидор</a>'
+           '<br> <a href="/status">тык</a>'
 
 
 @app.route('/status')
@@ -16,6 +16,9 @@ def status():
         'messages_count': len(ListOfMessages)
     }
 
+@app.route('/api/iliya/<int:id>', methods=['POST'])
+def iliya(id):
+    return "текст" + str(id) + "текст"
 
 @app.route("/api/Messenger", methods=['POST'])
 def SendMessage():
