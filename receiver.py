@@ -1,19 +1,24 @@
 import requests
+import time
+from datetime import datetime
 
-# response = requests.get('http://127.0.0.1:5000/status')
-# print(response.status_code)
-# print(response.text)
-# print(response.json()['status'])
+def print_message(message):
+    t = message['time']
+    dt = datetime.fromtimestamp(t)
+    dt = dt.strftime('%d.%m.%Y %H:%M:%S')
+    print(dt, message['name'])
+    print(message['text'])
+    print()
 
-data = {
-    'name': 'Алёша',
-    'text': 'Привет'
-}
+after = 0
 
-response = requests.post(
-    'http://127.0.0.1:5000/send',
-    json={
-        'name': 'Алёша',
-        'text': 'Привет'
-    }
-)
+while True:
+    response = requests.get(
+        'http://127.0.0.1:5000/messages',
+        params={'after': after}
+    )
+    messages = response.json()['messages']
+    for message in messages:
+        print_message(message)
+        after = message['time']
+    time.sleep(1)

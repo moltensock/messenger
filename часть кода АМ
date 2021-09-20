@@ -1,0 +1,19 @@
+@app.route("/api/Messenger", methods=['POST'])
+def SendMessage():
+    message = request.json
+    print(message)
+    ListOfMessages.append(message)
+    print(message)
+    message_text = f"{message['UserName']} <{message['TimeStamp']}>: {message['MessageText']}"
+    print(f"Всего сообщений: {len(ListOfMessages)}. Посланное сообщение: {message_text}")
+    return f"Сообщение отправлено! Всего сообщений: {len(ListOfMessages)} ", 200
+
+
+@app.route("/api/Messenger/<int:id>")
+def GetMessage(id):
+    print(id)
+    if 0 <= id < len(ListOfMessages):
+        print(ListOfMessages[id])
+        return ListOfMessages[id], 200
+    else:
+        return "Not found", 400

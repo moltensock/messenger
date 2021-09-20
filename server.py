@@ -33,26 +33,6 @@ def status():
     }
 
 
-# @app.route("/api/Messenger", methods=['POST'])
-# def SendMessage():
-#    message = request.json
-#    print(message)
-#    ListOfMessages.append(message)
-#    print(message)
-#    message_text = f"{message['UserName']} <{message['TimeStamp']}>: {message['MessageText']}"
-#    print(f"Всего сообщений: {len(ListOfMessages)}. Посланное сообщение: {message_text}")
-#    return f"Сообщение отправлено! Всего сообщений: {len(ListOfMessages)} ", 200
-
-
-# @app.route("/api/Messenger/<int:id>")
-# def GetMessage(id):
-#    print(id)
-#    if 0 <= id < len(ListOfMessages):
-#        print(ListOfMessages[id])
-#        return ListOfMessages[id], 200
-#    else:
-#        return "Not found", 400
-
 @app.route('/send', methods=['POST'])
 def send_message():
     data = request.json
@@ -75,16 +55,34 @@ def send_message():
     }
 
     db.append(message)
+
+    if message == '/help':
+        message = {
+            'time': time.time(),
+            'name': 'Bot',
+            'text': 'Правила'
+        }
+        db.append(message)
+
     return {'ok': True}
 
 
 @app.route('/messages')
 def get_message():
     result = []
+
+    try:
+        after = float(request.args['after'])
+    except:
+        return abort(400)
+
     for message in db:
         if message['time'] > after:
             result.append(message)
-    return result
+            if len(result) >= 100:
+                break
+
+    return {'messages': result}
 
 
 if __name__ == '__main__':
