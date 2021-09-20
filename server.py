@@ -1,6 +1,6 @@
 import time
 from datetime import datetime
-from flask import Flask, request
+from flask import Flask, request, abort
 
 app = Flask(__name__)
 db = [
@@ -28,9 +28,8 @@ def status():
         'messages_count': len(db),
         'status': True,
         'name': 'Messenger',
-        'time': time.asctime(),
-        'time2': datetime.now().strftime('%Y/%m/%d'),
-        'time3': datetime.now().isoformat()
+        # 'time': time.asctime(),
+        'time2': datetime.now().strftime('%m.%d.%Y')
     }
 
 
@@ -57,8 +56,17 @@ def status():
 @app.route('/send', methods=['POST'])
 def send_message():
     data = request.json
+
+    if not isinstance(data, dict):
+        return abort(400)
+    if set(data.keys()) != {'name', 'text'}:
+        return abort(400)
+
     name = data['name']
     text = data['text']
+
+    if not isinstance(name, str) or not isinstance(text, str) or name == '' or text == '':
+        return abort(400)
 
     message = {
         'time': time.time(),
@@ -67,7 +75,6 @@ def send_message():
     }
 
     db.append(message)
-    
     return {'ok': True}
 
 
