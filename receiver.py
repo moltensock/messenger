@@ -21,4 +21,5 @@ while True:
     for message in messages:
         print_message(message)
         after = message['time']
+
     time.sleep(1)
